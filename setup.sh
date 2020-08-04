@@ -52,6 +52,11 @@ echo "
 	function helpipaddress(){
 		docker network inspect bridge
 	}
+	
+	function drop_db(){
+		docker rm postgresdb --force &> /dev/null
+		sudo docker run --name postgresdb --net devnetwork --ip 172.18.0.23 --restart=always -e POSTGRES_PASSWORD=mysecretpassword -d postgres &> /dev/null
+	}
 " >> /.dbconnectscript.sh
 printf '\n%s\n' 'source /.dbconnectscript.sh' >> ~/.bashrc
 printf '\n %s \n' 'echo "use the helper functions: connectdb, helppostgress"' >> ~/.bashrc
