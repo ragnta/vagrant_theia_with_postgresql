@@ -33,8 +33,10 @@ if ! [ -x "$(command -v docker)" ]; then
 	sudo chmod 777 /home/vagrant/workspace
 	sudo docker network create --subnet=172.18.0.0/16 devnetwork &> /dev/null
 	sudo docker run --name spring-theia  --net devnetwork --ip 172.18.0.22 --restart=always --init  -p 3000:3000 -p 8080:8080 -v "/home/vagrant/workspace:/home/project:cached" -d kdvolder/sts4-theia-snapshot:latest &> /dev/null
-	sudo docker run --name postgresdb --net devnetwork --ip 172.18.0.23 --restart=always -e POSTGRES_PASSWORD=mysecretpassword -d postgres &> /dev/null
+	sudo docker run --name postgresdb --net devnetwork --ip 172.18.0.23 -p 5432:5432 --restart=always -e POSTGRES_PASSWORD=mysecretpassword -d postgres &> /dev/null
 else
+	docker rm spring-theia --force &> /dev/null
+	docker rmi kdvolder/sts4-theia-snapshot &> /dev/null
 	echo "the engines are already installed."
 fi
 
@@ -107,7 +109,7 @@ echo "
 	
 	function drop_db(){
 		docker rm postgresdb --force &> /dev/null
-		sudo docker run --name postgresdb --net devnetwork --ip 172.18.0.23 --restart=always -e POSTGRES_PASSWORD=mysecretpassword -d postgres &> /dev/null
+		sudo docker run --name postgresdb --net devnetwork --ip 172.18.0.23 -p 5432:5432 --restart=always -e POSTGRES_PASSWORD=mysecretpassword -d postgres &> /dev/null
 	}
 " >> /.dbconnectscript.sh
 echo $source_line >> ~/.bashrc

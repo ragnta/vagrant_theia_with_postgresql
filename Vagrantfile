@@ -20,7 +20,7 @@ Vagrant.configure("2") do |config|
   end
   config.vm.provision "shell", path: "./setup.sh", privileged: false
  
-  ports = [ 8080, 3000,3002 ]
+  ports = [ 3000, 3001, 5432 ]
   ports.each do |port|
 	config.vm.network :forwarded_port, guest: port, host: port
   end
